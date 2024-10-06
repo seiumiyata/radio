@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ラジオ番組台本プロンプト生成ツール</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+            background-color: #1a1a1a;
+            color: #e0e0e0;
+        }
+        h1 {
+            text-align: center;
+            color: #bb86fc;
+        }
+        form {
+            display: grid;
+            gap: 15px;
+            background-color: #2d2d2d;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.3);
+        }
+        label {
+            font-weight: bold;
+            color: #bb86fc;
+        }
+        input, textarea, select {
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+            border: 1px solid #bb86fc;
+            border-radius: 4px;
+            font-size: 16px;
+            background-color: #3d3d3d;
+            color: #e0e0e0;
+        }
+        button {
+            padding: 12px;
+            background-color: #bb86fc;
+            color: #1a1a1a;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #9966cc;
+        }
+        #result {
+            margin-top: 20px;
+            border: 1px solid #bb86fc;
+            padding: 15px;
+            white-space: pre-wrap;
+            background-color: #2d2d2d;
+            border-radius: 4px;
+        }
+        #copyButton {
+            margin-top: 10px;
+            background-color: #03dac6;
+        }
+        #copyButton:hover {
+            background-color: #018786;
+        }
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+        .checkbox-group label {
+            font-weight: normal;
+            color: #e0e0e0;
+        }
+    </style>
+</head>
+<body>
+    <h1>ラジオ番組台本プロンプト生成ツール</h1>
+    <form id="promptForm">
+        <label for="programName">番組名:</label>
+        <input type="text" id="programName" required>
+
+        <label for="duration">番組の長さ（分）:</label>
+        <input type="number" id="duration" required min="5" max="180">
+
+        <label for="theme">テーマ:</label>
+        <input type="text" id="theme" required>
+
+        <label for="atmosphere">番組の雰囲気:</label>
+        <select id="atmosphere" required>
+            <option value="明るく楽しい">明るく楽しい</option>
+            <option value="落ち着いた">落ち着いた</option>
+            <option value="知的で深い">知的で深い</option>
+            <option value="エネルギッシュ">エネルギッシュ</option>
+            <option value="リラックスした">リラックスした</option>
+        </select>
+
+        <label for="targetAudience">ターゲット層:</label>
+        <input type="text" id="targetAudience" required>
+
+        <label for="personality">パーソナリティ情報:</label>
+        <textarea id="personality" required></textarea>
+
+        <label for="presenterStyle">プレゼンタースタイル:</label>
+        <select id="presenterStyle" required>
+            <option value="黒柳徹子">黒柳徹子 - 温かみのある対話と深い洞察</option>
+            <option value="スティーブ・ジョブズ">スティーブ・ジョブズ - 情熱的で革新的なプレゼンテーション</option>
+            <option value="久米宏">久米宏 - 冷静沈着で鋭い質問</option>
+            <option value="オプラ・ウィンフリー">オプラ・ウィンフリー - 共感力と感動的なストーリーテリング</option>
+            <option value="明石家さんま">明石家さんま - テンポの良い会話と機知に富んだユーモア</option>
+            <option value="アンダーソン・クーパー">アンダーソン・クーパー - 客観的で明確な報道スタイル</option>
+            <option value="西脇資哲">西脇資哲 - テクニカルな内容の分かりやすい説明</option>
+            <option value="トニー・ロビンス">トニー・ロビンス - エネルギッシュで動機付けの高いスピーチ</option>
+            <option value="渡辺直美">渡辺直美 - 親しみやすく、ボディランゲージを活かした表現</option>
+            <option value="ハンス・ロスリング">ハンス・ロスリング - データの視覚化と複雑な情報の分かりやすい説明</option>
+        </select>
+
+        <label for="structureOption">構成の設定:</label>
+        <select id="structureOption" required>
+            <option value="custom">自分で入力する</option>
+            <option value="ai">AIにおまかせ</option>
+        </select>
+
+        <div id="structureInputContainer">
+            <label for="structure">番組構成:</label>
+            <textarea id="structure" required></textarea>
+        </div>
+
+        <label>特別な要素:</label>
+        <div class="checkbox-group">
+            <label><input type="checkbox" name="specialFeatures" value="リスナー参加"> リスナー参加</label>
+            <label><input type="checkbox" name="specialFeatures" value="ゲスト出演"> ゲスト出演</label>
+            <label><input type="checkbox" name="specialFeatures" value="生演奏"> 生演奏</label>
+            <label><input type="checkbox" name="specialFeatures" value="クイズコーナー"> クイズコーナー</label>
+            <label><input type="checkbox" name="specialFeatures" value="ドラマ仕立て"> ドラマ仕立て</label>
+            <label><input type="checkbox" name="specialFeatures" value="実況中継"> 実況中継</label>
+        </div>
+        <label for="otherSpecialFeatures">その他の特別な要素:</label>
+        <textarea id="otherSpecialFeatures"></textarea>
+
+        <label for="musicUse">音楽の使用:</label>
+        <select id="musicUse" required>
+            <option value="多め">多め</option>
+            <option value="普通">普通</option>
+            <option value="少なめ">少なめ</option>
+        </select>
+
+        <label for="constraints">制約事項:</label>
+        <textarea id="constraints"></textarea>
+
+        <button type="submit">プロンプト生成</button>
+    </form>
+
+    <div id="result"></div>
+    <button id="copyButton" style="display: none;">プロンプトをコピー</button>
+
+    <script>
+        document.getElementById('structureOption').addEventListener('change', function() {
+            const structureInput = document.getElementById('structureInputContainer');
+            if (this.value === 'ai') {
+                structureInput.style.display = 'none';
+                document.getElementById('structure').removeAttribute('required');
+            } else {
+                structureInput.style.display = 'block';
+                document.getElementById('structure').setAttribute('required', '');
+            }
+        });
+
+        document.getElementById('promptForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const programName = document.getElementById('programName').value;
+            const duration = document.getElementById('duration').value;
+            const theme = document.getElementById('theme').value;
+            const atmosphere = document.getElementById('atmosphere').value;
+            const targetAudience = document.getElementById('targetAudience').value;
+            const personality = document.getElementById('personality').value;
+            const presenterStyle = document.getElementById('presenterStyle').value;
+            const structureOption = document.getElementById('structureOption').value;
+            let structure = '';
+            if (structureOption === 'custom') {
+                structure = document.getElementById('structure').value;
+            } else {
+                structure = "AIによる最適な構成を提案してください。";
+            }
+            const specialFeatures = Array.from(document.querySelectorAll('input[name="specialFeatures"]:checked')).map(el => el.value);
+            const otherSpecialFeatures = document.getElementById('otherSpecialFeatures').value;
+            const musicUse = document.getElementById('musicUse').value;
+            const constraints = document.getElementById('constraints').value;
+
+            const presenterStyleGuide = getPresenterStyleGuide(presenterStyle);
+
+            const prompt = `あなたは情熱に満ちたプロの放送作家です。${duration}分のラジオ番組『${programName}』の台本を、魂を込めて創り上げてください。この台本は、リスナーの心に深く刻まれる忘れられない体験となるはずです。
+
+テーマ: ${theme}
+この番組の核心であるテーマを、リスナーの心に響く物語として紡ぎ出してください。単なる情報の羅列ではなく、感動的なストーリーとして展開させてください。
+
+番組の雰囲気: ${atmosphere}
+${atmosphere}な雰囲気を、音の魔法で創り出してください。BGM、効果音、そして沈黙さえも、巧みに操ってこの雰囲気を醸成してください。
+
+ターゲット層: ${targetAudience}
+${targetAudience}のリスナーの心を掴むために、彼らの興味、悩み、夢を深く理解し、それに寄り添う内容を提供してください。リスナーが「この番組は自分のためにある」と感じられるよう工夫してください。以下の点に特に注意してください：
+1. ターゲット層に合わせた分かりやすい言葉遣いを心がけてください。
+2. 専門用語や難しい表現を避け、親しみやすい表現を使用してください。
+3. ターゲット層の興味や関心に合わせた具体的な内容を提供してください。
+
+パーソナリティ: 
+${personality}
+このパーソナリティの個性を最大限に活かし、リスナーとの心の距離を縮める温かみのある進行を心がけてください。
+
+プレゼンタースタイル:
+${presenterStyle}のスタイルを魂の底から体現してください。
+${presenterStyleGuide}
+このスタイルを基盤としつつ、番組独自の個性も織り交ぜてください。
+
+番組構成:
+${structure}
+${structureOption === 'ai' ? "提案された構成を基に、起承転結のある魅力的なストーリー展開を作り出してください。各セグメントが有機的につながり、番組全体が一つの感動的な物語となるよう構成してください。" : "この構成を基に、起承転結のある魅力的なストーリー展開を作り出してください。各セグメントが有機的につながり、番組全体が一つの感動的な物語となるよう構成してください。"}
+
+特別な要素:
+${specialFeatures.join(', ')}
+${otherSpecialFeatures}
+これらの特別な要素を、番組の中で輝く宝石のように配置してください。リスナーを驚かせ、喜ばせ、感動させる仕掛けとして活用してください。
+
+音楽の使用: ${musicUse}
+音楽を${musicUse}に使用し、言葉では表現しきれない感情や雰囲気を伝えてください。BGMの選曲には細心の注意を払い、番組の世界観を音で表現してください。
+
+制約事項:
+${constraints}
+これらの制約を創造性の源として捉え、より洗練された表現方法を見出してください。
+
+台本には以下の要素を魂を込めて盛り込んでください：
+
+1. パーソナリティの台詞：${presenterStyle}のエッセンスを活かしつつ、聴く人の心に直接語りかけるような言葉選びをしてください。抑揚、間、声の調子まで細かく指示を入れ、言葉が持つ力を最大限に引き出してください。
+
+2. 視覚的な演出指示：リスナーの想像力を刺激する描写的な表現を用い、音だけで豊かな映像を思い浮かべられるような演出を心がけてください。
+
+3. 感情表現と非言語コミュニケーション：声のトーン、間の取り方、呼吸の仕方など、言葉以外の要素も細かく指示し、より深い感情表現を可能にしてください。
+
+4. ストーリーテリング：番組全体を通じて一貫したストーリー性を持たせ、リスナーを物語の世界に引き込んでください。起承転結を意識し、感動的なクライマックスへと導いてください。
+
+5. リスナー参加要素：リスナーが番組の一部となれるような仕掛けを用意し、双方向のコミュニケーションを生み出してください。リスナーの声を活かし、番組に命を吹き込んでください。
+
+6. 時間配分：${duration}分という時間を意識しつつも、リスナーが時間の経過を忘れるほど没頭できる内容にしてください。各セグメントの長さにメリハリをつけ、番組全体のリズムを作り出してください。
+
+7. 演出効果：BGM、効果音、無音の使い方を細かく指示し、聴覚だけで豊かな世界観を創り出してください。音の力を最大限に活用し、リスナーの想像力を刺激してください。
+
+8. クリフハンガー：次回への期待を高めるような仕掛けを入れ、リスナーが次の放送を心待ちにするような展開を作ってください。
+
+9. メッセージ性：番組のテーマに基づいた明確なメッセージを、さりげなく、しかし確実にリスナーの心に届けてください。
+
+10. ユーモアと感動：適度な笑いと深い感動を織り交ぜ、リスナーの感情を揺さぶる構成を心がけてください。
+
+11. 製品プレゼンテーション：
+   a. 製品の特徴や効果を具体的に説明してください。抽象的な表現ではなく、リスナーがイメージしやすい具体例を用いてください。
+   b. 製品の特性とその効果の関連性を明確に示してください。なぜその特徴が重要なのか、どのようにリスナーの生活を改善するのかを分かりやすく説明してください。
+   c. 製品の利点を説明する際は、ターゲット層の日常生活や課題に結びつけて説明してください。
+   d. 製品の使用方法や活用シーンを具体的に描写し、リスナーが自分の生活に取り入れやすいイメージを持てるようにしてください。
+   e. 可能であれば、実際のユーザーの声や体験談を交えて、製品の効果や魅力を生き生きと伝えてください。
+
+この台本が、単なる言葉の羅列ではなく、魂の込もった芸術作品となるよう、全身全霊を込めて創作してください。リスナーの人生に寄り添い、励まし、感動を与える、そんな特別な${duration}分を作り上げてください。あなたの創造力と情熱が、音の魔法となってリスナーの心を癒し、勇気づけ、新たな一歩を踏み出す力を与えるのです。さあ、魂を込めて、素晴らしい台本を紡ぎ出してください！`;
+
+            document.getElementById('result').textContent = prompt;
+            document.getElementById('copyButton').style.display = 'block';
+        });
+
+        function getPresenterStyleGuide(presenter) {
+            const styles = {
+                "黒柳徹子": "温かみのある話し方、ゲストへの丁寧な質問、深い洞察力を持った会話を心がけてください。黒柳徹子さんの特徴である、優しさと知性が溢れる進行を目指してください。",
+                "スティーブ・ジョブズ": "シンプルで力強いメッセージ、情熱的な語り口、聴衆を引き込む演出を意識してください。ジョブズ氏特有の、革新的なアイデアを分かりやすく伝える能力を活かしてください。",
+                "久米宏": "冷静沈着な進行、鋭い質問、時事問題への深い理解を示してください。久米さんの特徴である、中立的な立場からの鋭い洞察を番組に取り入れてください。",
+                "オプラ・ウィンフリー": "共感力のある対話、感動的なストーリーテリング、視聴者との強い結びつきを作ってください。オプラさんのように、リスナーの心に直接語りかける温かさを持った進行を心がけてください。",
+                "明石家さんま": "テンポの良い会話、機知に富んだユーモア、ゲストの魅力を引き出す進行を心がけてください。さんまさんの特徴である、軽快で楽しい雰囲気作りを意識してください。",
+                "アンダーソン・クーパー": "客観的な報道姿勢、明確な説明、緊迫感のある場面での冷静な対応を意識してください。クーパー氏の特徴である、深い洞察力と冷静な分析を番組に活かしてください。",
+                "西脇資哲": "テクニカルな内容のわかりやすい説明、デモンストレーションを交えた進行、聴衆との対話を重視してください。西脇氏の特徴である、複雑な技術を親しみやすく伝える能力を活用してください。",
+                "トニー・ロビンス": "エネルギッシュな語り口、聴衆の感情を揺さぶる言葉選び、行動を促す強い呼びかけを心がけてください。ロビンス氏の特徴である、人々を鼓舞し、行動を促す力強いメッセージを番組に取り入れてください。",
+                "渡辺直美": "親しみやすいキャラクター、ボディランゲージを活かした表現、リズム感のある進行を意識してください。渡辺さんの特徴である、明るく楽しい雰囲気作りと、聴衆を巻き込む能力を活用してください。",
+                "ハンス・ロスリング": "データの視覚化、複雑な情報のわかりやすい説明、聴衆の興味を引く演出を心がけてください。ロスリング氏の特徴である、統計データを用いた説得力のあるプレゼンテーションスタイルを番組に取り入れてください。"
+            };
+            return styles[presenter] || "選択されたプレゼンターのスタイルを意識して進行してください。";
+        }
+
+        document.getElementById('copyButton').addEventListener('click', function() {
+            const resultText = document.getElementById('result').textContent;
+            navigator.clipboard.writeText(resultText).then(function() {
+                alert('プロンプトがクリップボードにコピーされました。');
+            }, function(err) {
+                console.error('クリップボードへのコピーに失敗しました: ', err);
+            });
+        });
+    </script>
+</body>
+</html>
